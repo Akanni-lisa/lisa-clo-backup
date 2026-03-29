@@ -447,3 +447,20 @@
     text-align: center;
   }
 }
+
+/* FIX dropdown links */
+.account-dropdown a {
+  text-decoration: none !important;
+  color: var(--accent);
+  display: block;
+  padding: 10px;
+  border-radius: 9px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+/* Hover effect */
+.account-dropdown a:hover {
+  background: #f1e5d5;
+  text-decoration: none !important;
+}
