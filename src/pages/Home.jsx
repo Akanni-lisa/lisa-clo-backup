@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Collections from "../components/Collections";
 import { Link } from "react-router-dom";
 import {
   FaChevronLeft,
@@ -15,65 +16,92 @@ import logo from "../assets/logo.png";
 import slideOne from "../assets/homescreen/img1.jpg";
 import slideTwo from "../assets/homescreen/img2.png";
 import slideThree from "../assets/homescreen/img3.png";
-import menImageOne from "../assets/Men's Collection/3e3b1e0731bd0214689d5761effc2e5f.jpg";
-import menImageTwo from "../assets/Men's Collection/58cb38ae13a312ac83b8810624550a38.jpg";
-import menImageThree from "../assets/Men's Collection/bc8f2c1f855a92997f7e3f275afaa733.jpg";
-import womenImageOne from "../assets/Women's Collection/1eeaea48003b982da692a74822aeef07.jpg";
-import womenImageTwo from "../assets/Women's Collection/21ab5b5a0ba35f90c51a4119f61a6fa1.jpg";
-import womenImageThree from "../assets/Women's Collection/4325e96e149af54b55c025a0b309b688.jpg";
-import genzImageOne from "../assets/Gen Z Collection's/35987c374bb954361b11c09199e3f3de.jpg";
-import genzImageTwo from "../assets/Gen Z Collection's/73f4f1551f666363dae473329961b0f9.jpg";
-
+import slideFour from "../assets/homescreen/img4.png";
+import womenImageOne from "../assets/Women's Collection/img1.jpg";
+import womenImageTwo from "../assets/Women's Collection/img2.jpg";
+import womenImageThree from "../assets/Women's Collection/img3.jpg";
+import womenImageFour from "../assets/Women's Collection/img4.jpg";
+import womenImageFive from "../assets/Women's Collection/img5.jpg";
+import genzImageOne from "../assets/Gen Z Collection's/img1.jpg";
+import genzImageTwo from "../assets/Gen Z Collection's/img2.jpg";
+import genzImageThree from "../assets/Gen Z Collection's/img3.jpg";
+import genzImageFour from "../assets/Gen Z Collection's/img4.jpg";
+import genzImageFive from "../assets/Gen Z Collection's/img5.jpg";
+import { useNavigate } from "react-router-dom";
 export default function Home() {
+  const navigate = useNavigate();
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [allProducts, setAllProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+
   const [isAccountOpen, setIsAccountOpen] = useState(false);
-  const [query, setQuery] = useState("");
   const [currentSlide, setCurrentSlide] = useState(0);
   const [products, setProducts] = useState([]);
-  // Wishlist on collection cards is disabled for now.
-  // const [wishlistedCards, setWishlistedCards] = useState({});
-  // const [burstCards, setBurstCards] = useState({});
+  useEffect(() => {
+  fetch("http://localhost:8000/api/products")
+    .then(res => res.json())
+    .then(data => setAllProducts(data));
+}, []);
 
-  const slides = [slideOne, slideTwo, slideThree];
-  const menRepeatedImages = [
-    menImageOne,
-    menImageTwo,
-    menImageThree,
-    menImageOne,
-    menImageTwo,
-    menImageThree,
-    menImageOne,
-    menImageTwo,
-    menImageThree,
-  ];
+useEffect(() => {
+  if (searchQuery.trim() === "") {
+    setFilteredProducts([]);
+    return;
+  }
+const results = allProducts.filter((p) =>
+  p.name.toLowerCase().replace(/[^a-z0-9]/g, "")
+.includes(searchQuery.toLowerCase().replace(/[^a-z0-9]/g, ""))
+);
+  setFilteredProducts(results);
+}, [searchQuery, allProducts]);
+
+  const slides = [slideOne, slideTwo, slideThree,slideFour];
+  
   const womenRepeatedImages = [
     womenImageOne,
     womenImageTwo,
     womenImageThree,
-    womenImageOne,
-    womenImageTwo,
-    womenImageThree,
-    womenImageOne,
-    womenImageTwo,
-    womenImageThree,
+    womenImageFour,
+    womenImageFive,
+    womenImageThree
   ];
   const genzRepeatedImages = [
     genzImageOne,
     genzImageTwo,
-    genzImageOne,
-    genzImageTwo,
-    genzImageOne,
-    genzImageTwo,
-    genzImageOne,
-    genzImageTwo,
-    genzImageOne,
+    genzImageThree,
+    genzImageFour,
+    genzImageFive,
+    genzImageTwo
   ];
 
-  const suggestions = [
-    { name: "Everyday Joggers", price: "₹. 1,199.00" },
-    { name: "Oversized T-Shirt", price: "₹. 999.00" },
-    { name: "Performance Hoodie", price: "₹. 1,499.00" },
-  ];
+  <div className="suggestions">
+  {filteredProducts.slice(0, 5).map((item) => (
+    <div
+      key={item._id}
+      className="suggestion-card"
+      onClick={() =>
+        navigate(`/${item.category}/${item.name.toLowerCase()}`)
+      }
+      style={{ cursor: "pointer" }}
+    >
+
+      <img
+        src={`http://localhost:8000/uploads/${item.image}`}
+        alt={item.name}
+        style={{ width: "50px", height: "50px", borderRadius: "8px" }}
+      />
+
+      <div>
+        <p>{item.name}</p>
+        <p>₹{item.price}</p>
+      </div>
+    </div>
+  ))}
+</div>
+{searchQuery && filteredProducts.length === 0 && (
+  <p>No products found</p>
+)}
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % slides.length);
@@ -84,30 +112,19 @@ export default function Home() {
   };
 
   const scrollCollection = (rowId, direction) => {
-    const row = document.getElementById(rowId);
-    if (!row) return;
+  const row = document.getElementById(rowId);
+  if (!row) return;
 
-    row.scrollBy({
-      left: direction === "left" ? -280 : 280,
-      behavior: "smooth",
-    });
-  };
+  const card = row.querySelector(".collection-card");
+  if (!card) return;
 
-  // Collection-card wishlist handler is disabled for now.
-  // const toggleWishlist = (cardId) => {
-  //   const isCurrentlyWishlisted = !!wishlistedCards[cardId];
-  //
-  //   if (isCurrentlyWishlisted) {
-  //     setWishlistedCards((prev) => {
-  //       const updated = { ...prev };
-  //       delete updated[cardId];
-  //       return updated;
-  //     });
-  //     return;
-  //   }
-  //
-  //   setWishlistedCards((prev) => ({ ...prev, [cardId]: true }));
-  // };
+  const cardWidth = card.offsetWidth + 14; // include gap
+
+  row.scrollBy({
+    left: direction === "left" ? -cardWidth : cardWidth,
+    behavior: "smooth",
+  });
+};
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -121,11 +138,12 @@ useEffect(() => {
   fetch("http://localhost:8000/api/products")
     .then(res => res.json())
     .then(data => {
-      console.log("🔥 Products:", data);
+      console.log("🔥 Products:", data); // ✅ ADD THIS LINE
       setProducts(data);
     })
     .catch(err => console.error(err));
 }, []);
+
 
 const menProducts = products.filter(p => p.category === "men");
 const womenProducts = products.filter(p => p.category === "women");
@@ -141,15 +159,38 @@ const genzProducts = products.filter(p => p.category === "genz");
         </div>
 
         <nav className="center-nav" aria-label="Categories">
-          <button className="category-btn" type="button">
-            Men
-          </button>
-          <button className="category-btn" type="button">
-            Women
-          </button>
-          <button className="category-btn" type="button">
-            Gen Z
-          </button>
+          <div className="nav-item">
+            <button className="category-btn">Men</button>
+            <div className="dropdown-menu">
+              <Link to="/category/men/polo">Polo T-Shirts</Link>
+              <Link to="/category/men/oversized">Men's Oversized T-Shirts</Link>
+              <Link to="/category/men/regular">Men's Regular Fit</Link>
+              <Link to="/category/men/hoodie">Men's Hoodies</Link>
+              <Link to="/category/men/jeans">Men's Jeans</Link>
+            </div>
+          </div>
+
+          <div className="nav-item">
+            <button className="category-btn">Women</button>
+            <div className="dropdown-menu">
+              <Link to="/category/women/tshirts">Women's T-Shirts</Link>
+              <Link to="/category/women/crop-tops">Women's Crop Tops</Link>
+              <Link to="/category/women/oversized">Women's Oversized T-Shirts</Link>
+              <Link to="/category/women/hoodies">Women's Hoodies</Link>
+              <Link to="/category/women/bottoms">Women's Bottoms</Link>
+            </div>
+          </div>
+
+          <div className="nav-item">
+            <button className="category-btn">Gen Z</button>
+              <div className="dropdown-menu">
+                <Link to="/category/genz/oversized">Oversized T-Shirts</Link>
+                <Link to="/category/genz/joggers">Joggers</Link>
+                <Link to="/category/genz/baggy-jeans">Baggy Jeans</Link>
+                <Link to="/category/genz/hoodies">Hoodies</Link>
+                <Link to="/category/genz/baggy-shirts">Baggy Shirts</Link>
+              </div>
+          </div>
         </nav>
 
         <nav className="header-actions right-actions">
@@ -235,22 +276,30 @@ const genzProducts = products.filter(p => p.category === "genz");
               <FaChevronLeft />
             </button>
     <div id="men-collection" className="collection-row">
-              {menProducts.length > 0 ? (
-  menProducts.map((product) => (
-    <article className="collection-card" key={product._id}>
-      <img src={product.image} alt={product.name} />
-    </article>
-  ))
-) : (
-  menRepeatedImages.map((image, index) => (
-    <article className="collection-card" key={`men-${index}`}>
-      <img src={image} alt={`Men collection ${index + 1}`} />
-    </article>
-  ))
-)}
-  
-
-            </div>
+  {menProducts && menProducts.length > 0 ? (
+    menProducts.map((product) => (
+      <article
+  className="collection-card"
+  key={product._id}
+  onClick={() =>
+ navigate(`/category/men/${product.name.toLowerCase().replace(/[^a-z0-9]/g, "")}`)
+}
+  style={{ cursor: "pointer" }}
+>
+        <div className="image-wrapper">
+          <img
+            className="collection-image"
+            src={product.image}
+            alt={product.name}
+          />
+        </div>
+        <p className="product-name">{product.name}</p>
+      </article>
+    ))
+  ) : (
+    <p style={{ padding: "20px" }}>Loading...</p>
+  )}
+</div>
             <button
               className="collection-arrow right"
               type="button"
@@ -273,11 +322,24 @@ const genzProducts = products.filter(p => p.category === "genz");
             >
               <FaChevronLeft />
             </button>
-            <div id="women-collection" className="collection-row">
-              {womenProducts.length > 0 ? (
+            {womenProducts.length > 0 ? (
   womenProducts.map((product) => (
-    <article className="collection-card" key={product._id}>
-      <img src={product.image} alt={product.name} />
+    <article
+  className="collection-card"
+  key={product._id}
+  onClick={() =>
+  navigate(`/category/women/${product.name.toLowerCase().replace(/[^a-z0-9]/g, "")}`)
+}
+  style={{ cursor: "pointer" }}
+>
+      <div className="image-wrapper">
+        <img
+          className="collection-image"
+          src={product.image}
+          alt={product.name}
+        />
+      </div>
+      <p className="product-name">{product.name}</p>
     </article>
   ))
 ) : (
@@ -287,8 +349,6 @@ const genzProducts = products.filter(p => p.category === "genz");
     </article>
   ))
 )}
-          
-            </div>
             <button
               className="collection-arrow right"
               type="button"
@@ -311,11 +371,24 @@ const genzProducts = products.filter(p => p.category === "genz");
             >
               <FaChevronLeft />
             </button>
-            <div id="genz-collection" className="collection-row">
             {genzProducts.length > 0 ? (
   genzProducts.map((product) => (
-    <article className="collection-card" key={product._id}>
-      <img src={product.image} alt={product.name} />
+    <article
+  className="collection-card"
+  key={product._id}
+  onClick={() =>
+  navigate(`/category/genz/${product.name.toLowerCase().replace(/[^a-z0-9]/g, "")}`)
+}
+  style={{ cursor: "pointer" }}
+>
+      <div className="image-wrapper">
+        <img
+          className="collection-image"
+          src={product.image}
+          alt={product.name}
+        />
+      </div>
+      <p className="product-name">{product.name}</p>
     </article>
   ))
 ) : (
@@ -324,9 +397,7 @@ const genzProducts = products.filter(p => p.category === "genz");
       <img src={image} alt={`GenZ collection ${index + 1}`} />
     </article>
   ))
-)}  
-             
-            </div>
+)}
             <button
               className="collection-arrow right"
               type="button"
@@ -337,6 +408,8 @@ const genzProducts = products.filter(p => p.category === "genz");
             </button>
           </div>
         </section>
+
+      
       </main>
 
       <footer className="footer">
@@ -374,33 +447,63 @@ const genzProducts = products.filter(p => p.category === "genz");
 
           <div className="search-input-wrap">
             <input
-              type="text"
-              placeholder="Suggested searches"
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-            />
-            <button className="icon-btn" type="button" aria-label="Search">
-              <FaSearch />
-            </button>
+  type="text"
+  placeholder="Search products..."
+  value={searchQuery}
+  onChange={(e) => setSearchQuery(e.target.value)}
+  onKeyDown={(e) => {
+    if (e.key === "Enter") {
+      navigate(`/category/all/${searchQuery}`);
+      setIsSearchOpen(false);
+    }
+  }}
+/>
+  <FaSearch />
+
           </div>
 
           <div className="search-grid">
             <div>
               <h3>Popular categories</h3>
               <ul className="category-list">
-                <li>Joggers</li>
-                <li>Compression</li>
-                <li>Oversized T-shirt</li>
-                <li>Tank Top</li>
-              </ul>
+  {filteredProducts.map((item) => (
+    <li
+      key={item._id}
+      onClick={() =>
+        navigate(
+          `/category/${item.category}/${item.name
+            .toLowerCase()
+            .replace(/[^a-z0-9]/g, "")}`
+        )
+      }
+    >
+      {item.name}
+    </li>
+  ))}
+</ul>
             </div>
 
             <div>
               <h3>Suggestions</h3>
               <div className="suggestions">
-                {suggestions.map((item) => (
-                  <div key={item.name} className="suggestion-card">
-                    <div className="product-thumb"></div>
+                {filteredProducts.map((item) => (
+                  <div
+  key={item._id}
+  className="suggestion-card"
+  onClick={() =>
+    navigate(
+      `/category/${item.category}/${item.name
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, "")}`
+    )
+  }
+  style={{ cursor: "pointer" }}
+>
+                    <img
+  className="product-thumb"
+  src={`http://localhost:8000/uploads/${item.image.split("/").pop()}`}
+  alt={item.name}
+/>
                     <div>
                       <p className="item-name">{item.name}</p>
                       <p className="item-price">{item.price}</p>

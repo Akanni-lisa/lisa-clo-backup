@@ -19,8 +19,10 @@
 }
 
 .logo {
-  font-family: "Great Vibes", cursive;
-  font-size: 32px;
+  height: 70px;   
+  width: auto;
+  object-fit: contain;
+  cursor: pointer;
 }
 
 .wishlist-title {
@@ -69,7 +71,7 @@
 
 .wishlist-card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 8px 35px rgba(0,0,0,0.12);
+  box-shadow: 0 18px 35px rgba(0,0,0,0.12);
 }
 
 .wishlist-img {
@@ -181,4 +183,23 @@
 
 .dropdown-btn:hover {
   background: #f3eadb;
+}
+.qty-control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.qty-control button {
+  padding: 5px 10px;
+  border: none;
+  background: #8b5e3c;
+  color: white;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.qty-control span {
+  font-weight: bold;
 }

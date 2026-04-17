@@ -28,6 +28,7 @@ const storage = multer.diskStorage({
   }
 });
 
+app.use("/images", express.static("uploads")); 
 const upload = multer({ storage: storage });
 
 app.use(cors({origin:"*"}));

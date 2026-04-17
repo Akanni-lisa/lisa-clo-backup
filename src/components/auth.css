@@ -14,42 +14,54 @@ body {
 
 /* ================= HEADER ================= */
 .auth-header {
-  display: flex;
+  position: sticky;        
+  top: 0;
+  z-index: 100;
+  display: flex;           
+  justify-content: space-between;   /* logo left, icons right */
   align-items: center;
-  justify-content: space-between;
-
-  padding: 15px 30px;
-  background: linear-gradient(
-    135deg,
-    #f3eadb
-  );
-  border-bottom: 1px solid #d6c3aa; 
+  min-height: 78px;
+  padding: 0 20px;
+  background: rgba(243, 234, 219, 0.96);
+  border-bottom: 1px solid #d6c3aa;
+  backdrop-filter: blur(8px);
 }
 
-/* Logo */
-.auth-logo {
-  font-family: "Great Vibes", cursive;
-  font-size: 34px;
-  color: #8b5e3c;
-}
-
-/* Right icon */
 .auth-header-icons {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 10px;
+  margin-left: auto;      /* pushes icons to the far right */
 }
 
-/* Icon */
 .icon-btn {
-  color: #654321;
+  width: 38px;
+  height: 38px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #3b2414;
+  border-radius: 999px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-size: 18px;
   text-decoration: none;
-  cursor: pointer;
+  transition: all 0.25s ease;
 }
 
 .icon-btn:hover {
-  opacity: 0.7;
+  border-color: #3b2414;
+  background: #fdfaf5;
+  transform: translateY(-1px);
+}
+
+/* Logo */
+.logo {
+  height: 70px;   
+  width: auto;
+  object-fit: contain;
+  cursor: pointer;
 }
 
 /* ================= BACKGROUND ================= */
