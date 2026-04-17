@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import Login from "./components/Login";
 import Signup from "./components/Signup";
 import Cart from "./components/Cart";
+import Checkout from "./components/Checkout";
 import Wishlist from "./components/Wishlist.jsx";
 import CategoryPage from "./pages/CategoryPage";
 
@@ -26,9 +27,10 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/wishlist" element={<Wishlist />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/checkout" element={<Checkout />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/category/:category/:type" element={<CategoryPage />} />
+        <Route path="/:gender/:category" element={<CategoryPage />} />
       </Routes>
     </BrowserRouter>
   );
