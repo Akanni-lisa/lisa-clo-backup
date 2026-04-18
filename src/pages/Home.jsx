@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Collections from "../components/Collections";
 import { Link } from "react-router-dom";
 import {
@@ -33,28 +33,23 @@ export default function Home() {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [allProducts, setAllProducts] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]);
 
   const [isAccountOpen, setIsAccountOpen] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [products, setProducts] = useState([]);
   useEffect(() => {
-  fetch("http://localhost:8000/api/products")
-    .then(res => res.json())
-    .then(data => setAllProducts(data));
-}, []);
+    fetch("http://localhost:8000/api/products")
+      .then((res) => res.json())
+      .then((data) => setAllProducts(data))
+      .catch((err) => console.error(err));
+  }, []);
 
-useEffect(() => {
-  if (searchQuery.trim() === "") {
-    setFilteredProducts([]);
-    return;
-  }
-const results = allProducts.filter((p) =>
-  p.name.toLowerCase().replace(/[^a-z0-9]/g, "")
-.includes(searchQuery.toLowerCase().replace(/[^a-z0-9]/g, ""))
-);
-  setFilteredProducts(results);
-}, [searchQuery, allProducts]);
+  const filteredProducts = useMemo(() => {
+    if (searchQuery.trim() === "") return [];
+    const q = searchQuery.toLowerCase().replace(/[^a-z0-9]/g, "");
+    return allProducts.filter((p) =>
+      p.name.toLowerCase().replace(/[^a-z0-9]/g, "").includes(q)
+    );
+  }, [searchQuery, allProducts]);
 
   const slides = [slideOne, slideTwo, slideThree,slideFour];
   
@@ -74,34 +69,6 @@ const results = allProducts.filter((p) =>
     genzImageFive,
     genzImageTwo
   ];
-
-  <div className="suggestions">
-  {filteredProducts.slice(0, 5).map((item) => (
-    <div
-      key={item._id}
-      className="suggestion-card"
-      onClick={() =>
-        navigate(`/${item.category}/${item.name.toLowerCase()}`)
-      }
-      style={{ cursor: "pointer" }}
-    >
-
-      <img
-        src={`http://localhost:8000/uploads/${item.image}`}
-        alt={item.name}
-        style={{ width: "50px", height: "50px", borderRadius: "8px" }}
-      />
-
-      <div>
-        <p>{item.name}</p>
-        <p>₹{item.price}</p>
-      </div>
-    </div>
-  ))}
-</div>
-{searchQuery && filteredProducts.length === 0 && (
-  <p>No products found</p>
-)}
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % slides.length);
@@ -134,20 +101,9 @@ const results = allProducts.filter((p) =>
     return () => clearInterval(timer);
   }, [slides.length]);
 
-useEffect(() => {
-  fetch("http://localhost:8000/api/products")
-    .then(res => res.json())
-    .then(data => {
-      console.log("🔥 Products:", data); // ✅ ADD THIS LINE
-      setProducts(data);
-    })
-    .catch(err => console.error(err));
-}, []);
-
-
-const menProducts = products.filter(p => p.category === "men");
-const womenProducts = products.filter(p => p.category === "women");
-const genzProducts = products.filter(p => p.category === "genz");
+const menProducts = allProducts.filter((p) => p.category === "men");
+const womenProducts = allProducts.filter((p) => p.category === "women");
+const genzProducts = allProducts.filter((p) => p.category === "genz");
 
   return (
     <div className="page">
@@ -204,10 +160,10 @@ const genzProducts = products.filter(p => p.category === "genz");
               <FaSearch />
             </button>
           </div>
-          <Link to="/Wishlist" className="icon-btn" aria-label="Go to wishlist">
+          <Link to="/wishlist" className="icon-btn" aria-label="Go to wishlist">
             <FaRegHeart />
           </Link>
-          <Link to="/Cart" className="icon-btn" aria-label="Go to cart">
+          <Link to="/cart" className="icon-btn" aria-label="Go to cart">
             <FaShoppingCart />
           </Link>
           <div className="account-menu">
@@ -322,33 +278,37 @@ const genzProducts = products.filter(p => p.category === "genz");
             >
               <FaChevronLeft />
             </button>
+            <div id="women-collection" className="collection-row">
             {womenProducts.length > 0 ? (
-  womenProducts.map((product) => (
-    <article
-  className="collection-card"
-  key={product._id}
-  onClick={() =>
-  navigate(`/category/women/${product.name.toLowerCase().replace(/[^a-z0-9]/g, "")}`)
-}
-  style={{ cursor: "pointer" }}
->
-      <div className="image-wrapper">
-        <img
-          className="collection-image"
-          src={product.image}
-          alt={product.name}
-        />
-      </div>
-      <p className="product-name">{product.name}</p>
-    </article>
-  ))
-) : (
-  womenRepeatedImages.map((image, index) => (
-    <article className="collection-card" key={`women-${index}`}>
-      <img src={image} alt={`Women collection ${index + 1}`} />
-    </article>
-  ))
-)}
+              womenProducts.map((product) => (
+                <article
+                  className="collection-card"
+                  key={product._id}
+                  onClick={() =>
+                    navigate(
+                      `/category/women/${product.name.toLowerCase().replace(/[^a-z0-9]/g, "")}`
+                    )
+                  }
+                  style={{ cursor: "pointer" }}
+                >
+                  <div className="image-wrapper">
+                    <img
+                      className="collection-image"
+                      src={product.image}
+                      alt={product.name}
+                    />
+                  </div>
+                  <p className="product-name">{product.name}</p>
+                </article>
+              ))
+            ) : (
+              womenRepeatedImages.map((image, index) => (
+                <article className="collection-card" key={`women-${index}`}>
+                  <img src={image} alt={`Women collection ${index + 1}`} />
+                </article>
+              ))
+            )}
+            </div>
             <button
               className="collection-arrow right"
               type="button"
@@ -371,33 +331,37 @@ const genzProducts = products.filter(p => p.category === "genz");
             >
               <FaChevronLeft />
             </button>
+            <div id="genz-collection" className="collection-row">
             {genzProducts.length > 0 ? (
-  genzProducts.map((product) => (
-    <article
-  className="collection-card"
-  key={product._id}
-  onClick={() =>
-  navigate(`/category/genz/${product.name.toLowerCase().replace(/[^a-z0-9]/g, "")}`)
-}
-  style={{ cursor: "pointer" }}
->
-      <div className="image-wrapper">
-        <img
-          className="collection-image"
-          src={product.image}
-          alt={product.name}
-        />
-      </div>
-      <p className="product-name">{product.name}</p>
-    </article>
-  ))
-) : (
-  genzRepeatedImages.map((image, index) => (
-    <article className="collection-card" key={`genz-${index}`}>
-      <img src={image} alt={`GenZ collection ${index + 1}`} />
-    </article>
-  ))
-)}
+              genzProducts.map((product) => (
+                <article
+                  className="collection-card"
+                  key={product._id}
+                  onClick={() =>
+                    navigate(
+                      `/category/genz/${product.name.toLowerCase().replace(/[^a-z0-9]/g, "")}`
+                    )
+                  }
+                  style={{ cursor: "pointer" }}
+                >
+                  <div className="image-wrapper">
+                    <img
+                      className="collection-image"
+                      src={product.image}
+                      alt={product.name}
+                    />
+                  </div>
+                  <p className="product-name">{product.name}</p>
+                </article>
+              ))
+            ) : (
+              genzRepeatedImages.map((image, index) => (
+                <article className="collection-card" key={`genz-${index}`}>
+                  <img src={image} alt={`GenZ collection ${index + 1}`} />
+                </article>
+              ))
+            )}
+            </div>
             <button
               className="collection-arrow right"
               type="button"

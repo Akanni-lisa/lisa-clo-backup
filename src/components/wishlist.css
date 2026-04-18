@@ -203,3 +203,39 @@
 .qty-control span {
   font-weight: bold;
 }
+
+@media (max-width: 640px) {
+  .wishlist-page .header {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    justify-items: center;
+    text-align: center;
+    min-height: auto;
+    padding: 10px 12px;
+  }
+
+  .wishlist-header-icons {
+    justify-self: center;
+  }
+
+  .wishlist-container {
+    padding: 16px 12px 32px;
+    max-height: none;
+  }
+
+  .wishlist-grid {
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 160px), 1fr));
+    gap: 16px;
+  }
+
+  .wishlist-card {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    min-height: 360px;
+  }
+
+  .wishlist-title {
+    font-size: 20px;
+  }
+}

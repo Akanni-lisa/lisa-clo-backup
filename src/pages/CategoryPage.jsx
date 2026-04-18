@@ -13,30 +13,38 @@ import logo from "../assets/logo.png";
 import "./CategoryPage.css";
 export default function CategoryPage() {
   const {category, type} = useParams();
-  const [cartItems, setCartItems] = useState([]);
+  const [cartItems, setCartItems] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("cart")) || [];
+    } catch {
+      return [];
+    }
+  });
   const [isAccountOpen, setIsAccountOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [selectedSize, setSelectedSize] = useState("");
   const [selectedColor, setSelectedColor] = useState("");
   const [maxPrice, setMaxPrice] = useState(1500);
   const [allProducts, setAllProducts] = useState([]);
+  const [wishlistedCards, setWishlistedCards] = useState(() => {
+    try {
+      const stored = JSON.parse(localStorage.getItem("wishlist")) || [];
+      const mapped = {};
+      stored.forEach((item) => {
+        mapped[item._id] = true;
+      });
+      return mapped;
+    } catch {
+      return {};
+    }
+  });
+  const [burstCards, setBurstCards] = useState({});
 
-
-useEffect(() => {
-  fetch("http://localhost:8000/api/products")
-    .then((res) => res.json())
-    .then((data) => setAllProducts(data));
-}, []); 
-console.log("ALL:", allProducts);
-console.log("CATEGORY:", category);
-console.log("TYPE:", type);
-
-useEffect(() => {
-  const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
-  setCartItems(storedCart);
-}, []);
-console.log("URL:", category, type);
-console.log("Products:", allProducts);
+  useEffect(() => {
+    fetch("http://localhost:8000/api/products")
+      .then((res) => res.json())
+      .then((data) => setAllProducts(data));
+  }, []);
 
 const normalize = (str) => {
   return (str || "")
@@ -82,21 +90,6 @@ const normalize = (str) => {
     priceMatch
   );
 });
-console.log("CATEGORY:", category);
-console.log("TYPE:", type);
-console.log("FILTERED:", filteredProducts);
-
-  const [wishlistedCards, setWishlistedCards] = useState({});
-  useEffect(() => {
-  const stored = JSON.parse(localStorage.getItem("wishlist")) || [];
-
-  const mapped = {};
-  stored.forEach((item) => {
-    mapped[item._id] = true;
-  });
-    setWishlistedCards(mapped);
-  },[]);
-  const [burstCards, setBurstCards] = useState({});
 
   const toggleWishlist = (product) => {
   const wishlist =
@@ -191,8 +184,6 @@ const decreaseQty = (id) => {
 
        return (
     <div className="category-page">
-      <h2>{category?.toUpperCase()} COLLECTION</h2>
-      {/* HEADER */}
       <header className="header">
         <div className="header-content">
           <Link to="/">
@@ -209,7 +200,7 @@ const decreaseQty = (id) => {
             <FaFilter />
           </button>
 
-          <Link to="/Wishlist" className="icon-btn">
+          <Link to="/wishlist" className="icon-btn">
             <FaRegHeart />
           </Link>
 
@@ -232,6 +223,8 @@ const decreaseQty = (id) => {
           </div>
         </div>
       </header>
+
+      <h2 className="category-page-title">{category?.toUpperCase()} COLLECTION</h2>
 
       {/* FILTER DROPDOWN */}
       {isFilterOpen && (

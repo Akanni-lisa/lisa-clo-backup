@@ -1,4 +1,4 @@
-import React, { useEffect , useState} from "react";
+import React, { useState } from "react";
 import "./wishlist.css";
 import { Link } from "react-router-dom";
 import { FaTimes, FaHome, FaUserCircle } from "react-icons/fa";
@@ -10,11 +10,13 @@ export default function Wishlist() {
   const [items, setItems] = useState(() => {
   return JSON.parse(localStorage.getItem("wishlist")) || [];
 });
-const [cartItems, setCartItems] = useState([]);
-useEffect(() => {
-  const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
-  setCartItems(storedCart);
-}, []);
+const [cartItems, setCartItems] = useState(() => {
+  try {
+    return JSON.parse(localStorage.getItem("cart")) || [];
+  } catch {
+    return [];
+  }
+});
 
  const removeItem = (id) => {
   const updated = items.filter((item) => item._id !== id);
@@ -116,7 +118,7 @@ const decreaseQty = (id) => {
         ) : (
           <div className="wishlist-grid">
             {items.map((item) => (
-              <div className="wishlist-card" key={item.id}>
+              <div className="wishlist-card" key={item._id}>
                 
                 <button
                   className="remove-btn"
