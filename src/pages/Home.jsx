@@ -279,7 +279,7 @@ const genzProducts = allProducts.filter((p) => p.category === "genz");
         style={{ cursor: "pointer" }}
       >
         <div className="image-wrapper">
-          .
+          console.log("MEN PRODUCT:", product);
          <img
   className="collection-image"
   src={product.image}
