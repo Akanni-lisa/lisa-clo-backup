@@ -265,11 +265,11 @@ const genzProducts = allProducts.filter((p) => p.category === "genz");
         style={{ cursor: "pointer" }}
       >
         <div className="image-wrapper">
-          <img
-            className="collection-image"
-            src={resolveMediaUrl(product.image)}   // ✅ FIXED LINE
-            alt={product.name}
-          />
+         <img
+  className="collection-image"
+  src={resolveMediaUrl(product.image)}
+  alt={product.name}
+/>
         </div>
         <p className="product-name">{product.name}</p>
       </article>
