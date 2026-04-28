@@ -59,7 +59,7 @@ const placeOrder = async () => {
   console.log("📦 Sending order:", orderData);
 
   try {
-    const res = await fetch("https://lisa-clo-backup.onrender.com/api/orders", {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/orders`, {
       method: "POST", // ✅ VERY IMPORTANT
       headers: {
         "Content-Type": "application/json", // ✅ VERY IMPORTANT
