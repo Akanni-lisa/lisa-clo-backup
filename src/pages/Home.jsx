@@ -267,8 +267,15 @@ const genzProducts = allProducts.filter((p) => p.category === "genz");
   
 
 <div id="men-collection" className="collection-row">
-  {menProducts.length > 0 ? (
-    menProducts.map((product) => (
+  {menProducts.map((product) => {
+    const imageUrl =
+      product && product.image
+        ? product.image.startsWith("http")
+          ? product.image
+          : `https://lisa-clo-backup.onrender.com${product.image}`
+        : null;
+
+    return (
       <article
         className="collection-card"
         key={product._id}
@@ -282,29 +289,18 @@ const genzProducts = allProducts.filter((p) => p.category === "genz");
         style={{ cursor: "pointer" }}
       >
         <div className="image-wrapper">
-        <img
-  className="collection-image"
-  src={
-    product.image
-      ? product.image.startsWith("http")
-        ? product.image
-        : `https://lisa-clo-backup.onrender.com${product.image}`
-      : "https://via.placeholder.com/300"
-  }
-  alt={product.name}
-/>
+          {imageUrl && (
+            <img
+              className="collection-image"
+              src={imageUrl}
+              alt={product.name}
+            />
+          )}
         </div>
         <p className="product-name">{product.name}</p>
       </article>
-    ))
-  ) : (
-    // ✅ ADD THIS FALLBACK (you were missing it)
-    menRepeatedImages.map((image, index) => (
-      <article className="collection-card" key={`men-${index}`}>
-        <img src={image} alt={`Men collection ${index + 1}`} />
-      </article>
-    ))
-  )}
+    );
+  })}
 </div>
             <button
               className="collection-arrow right"
