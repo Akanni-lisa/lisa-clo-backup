@@ -281,7 +281,7 @@ const genzProducts = allProducts.filter((p) => p.category === "genz");
         <div className="image-wrapper">
          <img
   className="collection-image"
-  src={resolveMediaUrl(product.image)}
+  src={product.image}
   alt={product.name}
 />
         </div>
