@@ -4,7 +4,6 @@ import { Link } from "react-router-dom";
 import { FaTimes, FaHome, FaUserCircle } from "react-icons/fa";
 
 import logo from "../assets/logo.png";
-import { resolveMediaUrl } from "../config/api";
 
 export default function Wishlist() {
   const [isAccountOpen, setIsAccountOpen] = useState(false);
@@ -131,10 +130,12 @@ const decreaseQty = (id) => {
                 <div className="wishlist-img">
                  <img
   src={
-    item.image
-      ? resolveMediaUrl(item.image)
-      : "/fallback.png"
-  }
+  item?.image
+    ? item.image.startsWith("http")
+      ? item.image
+      : `https://lisa-clo-backup.onrender.com${item.image}`
+    : ""
+}
   alt={item.name}
 />
                 </div>

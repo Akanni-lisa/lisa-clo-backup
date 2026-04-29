@@ -11,7 +11,6 @@ import {
 
 import logo from "../assets/logo.png";
 import "./CategoryPage.css";
-import { , resolveMediaUrl } from "../config/api";
 
 export default function CategoryPage() {
   const {category, type} = useParams();
@@ -356,7 +355,13 @@ const decreaseQty = (id) => {
             <div className="image-wrapper">
               <img
     className="product-image"
-   src={resolveMediaUrl(item.image)}
+   src={
+  item?.image
+    ? item.image.startsWith("http")
+      ? item.image
+      : `https://lisa-clo-backup.onrender.com${item.image}`
+    : ""
+}
     alt={item.name}
   />
               <button
