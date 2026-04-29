@@ -50,7 +50,7 @@ export default function Home() {
       const res = await fetch("https://lisa-clo-backup.onrender.com/api/products");
       const data = await res.json();
 
-      setAllProducts(Array.isArray(data) ? data : data.products || []);  // IMPORTANT: no conditions
+      setAllProducts(Array.isArray(data) ? data : data.products || []); 
     } catch (err) {
       console.error(err);
       setAllProducts([]);  // fallback to empty array on error
@@ -125,7 +125,8 @@ export default function Home() {
 
     return () => clearInterval(timer);
   }, [slides.length]);
-const menProducts = allProducts.filter((p) => p.category && p.category.toLowerCase() === "men");
+
+const menProducts = allProducts.filter((p) => p.category && p.category.trim().toLowerCase() === "men");
 const womenProducts = allProducts.filter((p) => p.category && p.category.toLowerCase() === "women");
 const genzProducts = allProducts.filter((p) => p.category && p.category.toLowerCase() === "genz");
 
@@ -273,7 +274,7 @@ const genzProducts = allProducts.filter((p) => p.category && p.category.toLowerC
                   <div className="image-wrapper">
                     <img
                       className="collection-image"
-                      src={product.image}
+                    src={resolveMediaUrl(product.image)}
                       alt={product.name}
                     />
                   </div>
