@@ -518,13 +518,13 @@ const genzProducts = allProducts.filter((p) => p.category && p.category.toLowerC
 >
                     <img
   className="product-thumb"
-src={
-  item.image
-    ? item.image.startsWith("http")
-      ? item.image
-      : `https://lisa-clo-backup.onrender.com${item.image}`
-    : ""
-}
+  src={
+    item.image
+      ? item.image.startsWith("http")
+        ? item.image
+        : `https://lisa-clo-backup.onrender.com${item.image}`
+      : ""
+  }
   alt={item.name}
 />
                     <div>
