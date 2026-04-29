@@ -1,20 +1,23 @@
-import React, { useEffect , useState} from "react";
+import React, { useState } from "react";
 import "./wishlist.css";
 import { Link } from "react-router-dom";
 import { FaTimes, FaHome, FaUserCircle } from "react-icons/fa";
 
 import logo from "../assets/logo.png";
+import { resolveMediaUrl } from "../config/api";
 
 export default function Wishlist() {
   const [isAccountOpen, setIsAccountOpen] = useState(false);
   const [items, setItems] = useState(() => {
   return JSON.parse(localStorage.getItem("wishlist")) || [];
 });
-const [cartItems, setCartItems] = useState([]);
-useEffect(() => {
-  const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
-  setCartItems(storedCart);
-}, []);
+const [cartItems, setCartItems] = useState(() => {
+  try {
+    return JSON.parse(localStorage.getItem("cart")) || [];
+  } catch {
+    return [];
+  }
+});
 
  const removeItem = (id) => {
   const updated = items.filter((item) => item._id !== id);
@@ -116,7 +119,7 @@ const decreaseQty = (id) => {
         ) : (
           <div className="wishlist-grid">
             {items.map((item) => (
-              <div className="wishlist-card" key={item.id}>
+              <div className="wishlist-card" key={item._id}>
                 
                 <button
                   className="remove-btn"
@@ -129,7 +132,7 @@ const decreaseQty = (id) => {
                  <img
   src={
     item.image
-      ? `http://localhost:8000/uploads/${item.image.split("/").pop()}`
+      ? resolveMediaUrl(item.image)
       : "/fallback.png"
   }
   alt={item.name}
