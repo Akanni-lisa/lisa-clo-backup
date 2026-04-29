@@ -256,36 +256,38 @@ const genzProducts = allProducts.filter((p) => p.category && p.category.toLowerC
               <FaChevronLeft />
             </button>
   
-<div id="men-collection" className="collection-row">
-  {menProducts.map((product) => (
-    <article
-      className="collection-card"
-      key={product._id}
-      onClick={() =>
-        navigate(
-          `/category/men/${product.name
-            .toLowerCase()
-            .replace(/[^a-z0-9]/g, "")}`
-        )
-      }
-      style={{ cursor: "pointer" }}
-    >
-      <div className="image-wrapper">
-        <img
-          className="collection-image"
-          src={
-            product?.image?.startsWith("http")
-              ? product.image
-              : `https://lisa-clo-backup.onrender.com${product.image}`
-          }
-          alt={product.name}
-        />
-      </div>
-      <p className="product-name">{product.name}</p>
-    </article>
-  ))}
-</div>
-      
+
+     <div id="men-collection" className="collection-row">
+            {menProducts.length > 0 ? (
+              menProducts.map((product) => (
+                <article
+                  className="collection-card"
+                  key={product._id}
+                  onClick={() =>
+                    navigate(
+                      `/category/men/${product.name.toLowerCase().replace(/[^a-z0-9]/g, "")}`
+                    )
+                  }
+                  style={{ cursor: "pointer" }}
+                >
+                  <div className="image-wrapper">
+                    <img
+                      className="collection-image"
+                      src={resolveMediaUrl(product.image)}
+                      alt={product.name}
+                    />
+                  </div>
+                  <p className="product-name">{product.name}</p>
+                </article>
+              ))
+            ) : (
+              menRepeatedImages.map((image, index) => (
+                <article className="collection-card" key={`men-${index}`}>
+                  <img src={image} alt={`Men collection ${index + 1}`} />
+                </article>
+              ))
+            )}
+            </div> 
       
             <button
               className="collection-arrow right"
