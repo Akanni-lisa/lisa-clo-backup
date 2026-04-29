@@ -34,7 +34,7 @@ import genzImageThree from "../assets/Gen Z Collection's/img3.jpg";
 import genzImageFour from "../assets/Gen Z Collection's/img4.jpg";
 import genzImageFive from "../assets/Gen Z Collection's/img5.jpg";
 import { useNavigate } from "react-router-dom";
-import { apiPath, resolveMediaUrl } from "../config/api";
+
 
 export default function Home() {
   const navigate = useNavigate();
@@ -273,7 +273,7 @@ const genzProducts = allProducts.filter((p) => p.category && p.category.toLowerC
                   <div className="image-wrapper">
                     <img
                       className="collection-image"
-                      src={resolveMediaUrl(product.image)}
+                      src={product.image}
                       alt={product.name}
                     />
                   </div>
