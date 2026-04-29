@@ -11,7 +11,7 @@ import {
 
 import logo from "../assets/logo.png";
 import "./CategoryPage.css";
-import { apiPath, resolveMediaUrl } from "../config/api";
+import { , resolveMediaUrl } from "../config/api";
 
 export default function CategoryPage() {
   const {category, type} = useParams();

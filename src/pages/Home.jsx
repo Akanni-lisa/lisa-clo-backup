@@ -272,6 +272,7 @@ const genzProducts = allProducts.filter((p) => p.category && p.category.toLowerC
                   style={{ cursor: "pointer" }}
                 >
                   <div className="image-wrapper">
+                    {product.image && (
   <img
     className="collection-image"
     src={
@@ -283,6 +284,7 @@ const genzProducts = allProducts.filter((p) => p.category && p.category.toLowerC
     }
     alt={product.name}
   />
+                    )}
 </div>
                   <p className="product-name">{product.name}</p>
                 </article>
