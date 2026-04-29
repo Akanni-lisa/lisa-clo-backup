@@ -25,9 +25,8 @@ function App() {
     <BrowserRouter>
       <ScrollToTop />        {/* ← outside <Routes> */}
       <Routes>
-        <ErrorBoundary>
-        <Route path="/" element={<Home />} />
-        </ErrorBoundary>
+       
+        <Route path="/" element={<ErrorBoundary><Home /></ErrorBoundary>} />
         <Route path="/wishlist" element={<Wishlist />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />
