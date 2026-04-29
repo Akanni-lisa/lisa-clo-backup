@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { useEffect } from "react";
+import ErrorBoundary from "./ErrorBoundary";
 
 import Home from "./pages/Home";
 import Login from "./components/Login";
@@ -24,7 +25,9 @@ function App() {
     <BrowserRouter>
       <ScrollToTop />        {/* ← outside <Routes> */}
       <Routes>
+        <ErrorBoundary>
         <Route path="/" element={<Home />} />
+        </ErrorBoundary>
         <Route path="/wishlist" element={<Wishlist />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout" element={<Checkout />} />

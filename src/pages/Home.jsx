@@ -272,12 +272,18 @@ const genzProducts = allProducts.filter((p) => p.category && p.category.toLowerC
                   style={{ cursor: "pointer" }}
                 >
                   <div className="image-wrapper">
-                    <img
-                      className="collection-image"
-                    src={resolveMediaUrl(product.image)}
-                      alt={product.name}
-                    />
-                  </div>
+  <img
+    className="collection-image"
+    src={
+      product.image
+        ? product.image.startsWith("http")
+          ? product.image
+          : `https://lisa-clo-backup.onrender.com${product.image}`
+        : ""
+    }
+    alt={product.name}
+  />
+</div>
                   <p className="product-name">{product.name}</p>
                 </article>
               ))
@@ -326,12 +332,18 @@ const genzProducts = allProducts.filter((p) => p.category && p.category.toLowerC
                   style={{ cursor: "pointer" }}
                 >
                   <div className="image-wrapper">
-                    <img
-                      className="collection-image"
-                      src={resolveMediaUrl(product.image)}
-                      alt={product.name}
-                    />
-                  </div>
+  <img
+    className="collection-image"
+    src={
+      product.image
+        ? product.image.startsWith("http")
+          ? product.image
+          : `https://lisa-clo-backup.onrender.com${product.image}`
+        : ""
+    }
+    alt={product.name}
+  />
+</div>
                   <p className="product-name">{product.name}</p>
                 </article>
               ))
@@ -378,13 +390,20 @@ const genzProducts = allProducts.filter((p) => p.category && p.category.toLowerC
                   }
                   style={{ cursor: "pointer" }}
                 >
-                  <div className="image-wrapper">
-                    <img
-                      className="collection-image"
-                      src={resolveMediaUrl(product.image)}
-                      alt={product.name}
-                    />
-                  </div>
+                 <div className="image-wrapper">
+  <img
+    className="collection-image"
+    src={
+      product.image
+        ? product.image.startsWith("http")
+          ? product.image
+          : `https://lisa-clo-backup.onrender.com${product.image}`
+        : ""
+    }
+    alt={product.name}
+  />
+</div>
+                
                   <p className="product-name">{product.name}</p>
                 </article>
               ))
@@ -499,7 +518,13 @@ const genzProducts = allProducts.filter((p) => p.category && p.category.toLowerC
 >
                     <img
   className="product-thumb"
-  src={resolveMediaUrl(item.image)}
+src={
+  item.image
+    ? item.image.startsWith("http")
+      ? item.image
+      : `https://lisa-clo-backup.onrender.com${item.image}`
+    : ""
+}
   alt={item.name}
 />
                     <div>
