@@ -1,10 +1,6 @@
 /*eslint-disable no-undef */
-console.log("🔥🔥 THIS IS THE REAL SERVER FILE");
-
+console.log("✅ SERVER FILE LOADED");
 require("dotenv").config({ path: __dirname + "/.env" });
-console.log("ENV CHECK:", process.env.MONGO_URI);
-
-console.log("ENV:", process.env.MONGO_URI);
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -15,61 +11,72 @@ const jwt = require("jsonwebtoken");
 const multer = require("multer");
 const path = require("path");
 const Product = require("./models/Product");
+const Order = require("./models/Order");
+const PORT = Number(process.env.PORT) || 8000;
+const PUBLIC_ORIGIN = (
+  process.env.PUBLIC_ORIGIN || `http://localhost:${PORT}`
+).replace(/\/$/, "");
 
-console.log("🔥 SERVER FILE LOADED");
-console.log("SERVER STARTED CORRECT FILE");
+const uploadDir = path.join(__dirname, "uploads");
 
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "backend/uploads/");
+  destination: function (_req, _file, cb) {
+    cb(null, uploadDir);
   },
-  filename: function (req, file, cb) {
+  filename: function (_req, file, cb) {
     cb(null, Date.now() + path.extname(file.originalname));
-  }
+  },
 });
 
-app.use("/images", express.static("uploads")); 
 const upload = multer({ storage: storage });
 
-app.use(cors({origin:"*"}));
+app.use(cors({ origin: "*" }));
 app.use(express.json());
-app.use("/uploads", express.static("backend/uploads"));
+app.use("/uploads", express.static(uploadDir, {
+  setHeaders: (res, path) => {
+    res.set("Access-Control-Allow-Origin", "*");
+  }
+}));
 
-app.get("/", (req, res) => {
+app.get("/", (_req, res) => {
   res.send("Backend Running 🚀");
 });
 
 app.post("/api/products", upload.single("image"), async (req, res) => {
   try {
     const { name, price, category } = req.body;
+    if (!req.file) {
+      return res.status(400).json({ error: "Image file is required" });
+    }
 
     const newProduct = new Product({
       name,
       price,
-      image: `http://localhost:8000/uploads/${req.file.filename}`, 
-      category
+      image: `${PUBLIC_ORIGIN}/uploads/${req.file.filename}`,
+      category,
     });
 
     await newProduct.save();
 
     res.json({ message: "Product added", product: newProduct });
-
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-app.get("/api/products", async (req, res) => { 
-  console.log("PRODUCTS ROUTE HIT");
+app.get("/api/products", async (_req, res) => {
   const products = await Product.find();
   res.json(products);
 });
 
 app.post("/api/upload", upload.single("image"), (req, res) => {
   try {
+    if (!req.file) {
+      return res.status(400).json({ error: "Image file is required" });
+    }
     res.json({
       message: "Image uploaded",
-      imageUrl: `http://localhost:5000/uploads/${req.file.filename}`
+      imageUrl: `${PUBLIC_ORIGIN}/uploads/${req.file.filename}`,
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -80,26 +87,22 @@ app.post("/api/auth/signup", async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    // check if user exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: "User already exists" });
     }
 
-    // hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // save user
     const user = new User({
       name,
       email,
-      password: hashedPassword
+      password: hashedPassword,
     });
 
     await user.save();
 
     res.json({ message: "Signup successful" });
-
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -123,15 +126,14 @@ app.post("/api/auth/login", async (req, res) => {
 
     res.json({
       message: "Login successful",
-      token
+      token,
     });
-
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-app.get("/users", async (req, res) => {
+app.get("/users", async (_req, res) => {
   try {
     const users = await User.find();
     res.json(users);
@@ -140,7 +142,6 @@ app.get("/users", async (req, res) => {
   }
 });
 
-
 app.post("/users", async (req, res) => {
   try {
     const newUser = new User(req.body);
@@ -148,20 +149,35 @@ app.post("/users", async (req, res) => {
 
     res.json({
       message: "User saved successfully",
-      user: newUser
+      user: newUser,
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-mongoose.connect(process.env.MONGO_URI)
+// ===== CREATE ORDER =====
+app.post("/api/orders", async (req, res) => {
+  try {
+    console.log("🔥 ORDER RECEIVED:", req.body);
+
+    const newOrder = new Order(req.body);
+    await newOrder.save();
+
+    res.status(201).json({ message: "Order saved" });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+
+mongoose
+  .connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB Connected to lisa_db"))
-  .catch(err => console.log(err));
-
-
- const PORT = process.env.PORT || 5000;
+  .catch((err) => console.log(err));
 
 app.listen(PORT, "0.0.0.0", () => {
-  console.log("Server running on port", PORT);
+  console.log("Server running on port", PORT, "PUBLIC_ORIGIN=", PUBLIC_ORIGIN);
 });
